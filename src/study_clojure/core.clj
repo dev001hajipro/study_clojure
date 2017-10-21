@@ -2,9 +2,6 @@
   (:require [clojure.java.io :as io])
   (:gen-class))
 
-; TODO open & write date
-; TODO delete file.
-
 (defn read-file [filepath]
   (with-open [rdr (io/reader filepath)]
     (doseq [str (line-seq rdr)]
@@ -24,10 +21,7 @@
 (defn now []
   ; the dot of 'Date.' means instanciate 'now' in Java.
   ; same like (new java.util.Date)
-  (java.util.Date.))       
-  
-
-  
+  (java.util.Date.))
     
 (defn home-path []
   (System/getProperty "user.home"))
@@ -35,6 +29,8 @@
 (defn -main
   [& args]
   (home-path)
-  (read-file2 "c:\\tmp\\hello.json" print)
-  (renew-file "c:\\tmp\\hello_clojure.txt")
+  (let [filepath "c:\\tmp\\hello_clojure.txt"]
+    (renew-file filepath)
+    (read-file2 filepath println))
+  
   (println "Hello, World!"))
