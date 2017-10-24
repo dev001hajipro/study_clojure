@@ -6,11 +6,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UTIL
 (defn now []
-  ; the dot of 'Date.' means instanciate 'now' in Java.
-  ; same like (new java.util.Date)
+  "the dot of 'Date.' means instanciate 'now' in Java.
+   same like (new java.util.Date)"
   (Date.))
     
 (defn home-path []
+  "get user home directory"
   (System/getProperty "user.home"))
 
 (defmulti rand* (fn [min max] [(class min) (class max)]))
@@ -41,12 +42,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Sandbox
 (defn factorial [n]
+  "factorial"
   (if (<= n 1N)
     1N
     (* n (factorial (dec n)))))
     
-; if-let sample
-(defn sample-if-let [n] 
+(defn sample-if-let [n]
+  "if-let sample"
   (if-let [v n] v "no data."))
 
 ; tail recursion
@@ -76,6 +78,71 @@
     (< n 10) "n<10"
     (< n 20) "n<20"
     :else "n>=20"))
+
+(defn destruct-map []
+  "exercise destruct and map"
+  (let [fruits {:name "apple" :quantity 50 :taste "good"}]
+    (let [{s :name, q :quantity} fruits]
+      (print s ",q=" q))))
+
+(defn hello-map []
+  "% is argument placeholder. # is lamda."
+  (let [fruits '("apple" "orange" "melon")]
+    (map #(* (count %) 2) fruits)))
+
+(defn vlen [v]
+  "count vector length."
+  (loop [l v, c 0]
+    (if (empty? l)
+      c
+      (recur (rest l) (inc c)))))
+
+(defn test1 []
+  (do
+    (every? even? (map #(* % 2) (range 1000000)))
+    (some nil? [1 2 nil])))
+      
+;; take & drop
+(defn take-drop []
+  (->>
+       [:xxx :yyy :zzz]
+       (cycle)
+       (drop 2)
+       (take 5)))
+
+(defn fact2 [n]
+  (apply * (take n (iterate inc 1))))
+
+(defn fact3 [n]
+  (->>
+       (iterate inc 1)
+       (take n)
+       (apply *)))
+
+;; protocol
+;; type and interface.
+(defprotocol Compass
+  (direction [c])
+  (left [c])
+  (right [c]))
+
+(def directions [:north :east :south :west])
+
+(defn turn [base amount]
+  ; reminder
+  (rem (+ base amount) (count directions)))
+
+(defrecord SimpleCompass [bearing]
+  Compass ; protocol name.
+  (direction [_]
+    (directions bearing))
+  (left [_]
+    (SimpleCompass. (turn bearing 3)))
+  (right [_]
+    (SimpleCompass. (turn bearing 1)))
+  Object ; protocol 
+  (toString [this] (str "[" (direction this) "]")))
+  
 
 (defn -main
   [& args]
